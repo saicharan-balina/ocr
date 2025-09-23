@@ -39,16 +39,14 @@ def check_python_packages():
 def check_tesseract():
     """Check if Tesseract OCR is available"""
     print("\n🔍 Checking Tesseract OCR...")
-    
     try:
-        import pytesseract
-        from PIL import Image
-        
+        import pytesseract  # type: ignore
+        from PIL import Image  # type: ignore
+
         # Try to get Tesseract version
         version = pytesseract.get_tesseract_version()
         print(f"  ✅ Tesseract version: {version}")
         return True
-        
     except Exception as e:
         print(f"  ❌ Tesseract not found: {e}")
         print("Please install Tesseract OCR:")
@@ -61,7 +59,7 @@ def check_pymupdf():
     """Check if PyMuPDF is available for PDF text and rendering support"""
     print("\n🔍 Checking PyMuPDF (PDF support)...")
     try:
-        import fitz
+        import fitz  # type: ignore
         v = fitz.VersionBind
         print(f"  ✅ PyMuPDF version: {v}")
         return True
@@ -74,8 +72,8 @@ def check_opencv_optional():
     """Check if OpenCV is available (optional, improves OCR)"""
     print("\n🔍 Checking OpenCV (optional)...")
     try:
-        import cv2  # noqa: F401
-        import numpy  # noqa: F401
+        import cv2  # type: ignore  # noqa: F401
+        import numpy  # type: ignore  # noqa: F401
         print("  ✅ OpenCV + NumPy available")
     except Exception:
         print("  ℹ️ OpenCV not installed; OCR will still work but may be less accurate.")
@@ -87,19 +85,18 @@ def test_flask_imports():
     
     try:
         sys.path.append('backend')
-        from utils.ocr_processor import OCRProcessor
-        from utils.file_handler import allowed_file, ALLOWED_EXTENSIONS
-        
+        from utils.ocr_processor import OCRProcessor  # type: ignore
+        from utils.file_handler import allowed_file, ALLOWED_EXTENSIONS  # type: ignore
+
         print("  ✅ OCR processor import successful")
         print("  ✅ File handler import successful")
         print(f"  ✅ Supported extensions: {', '.join(ALLOWED_EXTENSIONS)}")
-        
+
         # Test OCR processor initialization
         ocr = OCRProcessor()
         print("  ✅ OCR processor initialization successful")
-        
+
         return True
-        
     except Exception as e:
         print(f"  ❌ Flask import error: {e}")
         return False

@@ -2,9 +2,9 @@ import os
 from typing import List, Optional
 import logging
 
-import pytesseract
-from PIL import Image
-import fitz  # PyMuPDF
+import pytesseract  # type: ignore
+from PIL import Image  # type: ignore
+import fitz  # type: ignore  # PyMuPDF
 
 # Optional OpenCV for preprocessing (improves OCR accuracy if installed)
 try:
