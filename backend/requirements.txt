@@ -1,0 +1,10 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+pytesseract==0.3.10
+Pillow==10.0.1
+Werkzeug==2.3.7
+PyMuPDF==1.24.9
+
+# Optional but recommended for better OCR accuracy
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
