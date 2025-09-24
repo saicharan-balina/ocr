@@ -468,6 +468,45 @@ def register_certificate_file():
         return jsonify({ 'success': False, 'error': str(e) }), 500
 
 
+@app.route('/api/admin/clear-database', methods=['POST', 'OPTIONS'])
+def admin_clear_database():
+    """Admin-only: Clear all data from the database."""
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        # Require admin authentication
+        admin = require_api_key(request.headers)
+        
+        # Only allow super admin to clear database
+        if admin.get('role') != 'super_admin':
+            return jsonify({
+                'success': False,
+                'error': 'Insufficient permissions. Super admin role required.'
+            }), 403
+        
+        # Clear all data
+        result = store.clear_all_data()
+        
+        if result['success']:
+            logger.info(f"Database cleared by admin {admin.get('username', 'unknown')}: "
+                       f"{result['certificates_deleted']} certificates, "
+                       f"{result['verifications_deleted']} verifications deleted")
+            return jsonify(result), 200
+        else:
+            logger.error(f"Database clear failed: {result['error']}")
+            return jsonify(result), 500
+            
+    except AuthError as e:
+        return jsonify({'success': False, 'error': str(e)}), 401
+    except Exception as e:
+        logger.error(f"Error clearing database: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'Failed to clear database: {str(e)}'
+        }), 500
+
+
 @app.route('/api/stats', methods=['GET', 'OPTIONS'])
 def stats_alias():
     # Alias to admin_stats for convenience

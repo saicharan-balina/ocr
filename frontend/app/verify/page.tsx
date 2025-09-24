@@ -45,81 +45,81 @@ export default function VerifyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-blue-100 rounded-xl">
-              <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="p-3 bg-green-500/20 rounded-xl">
+              <svg className="w-8 h-8 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Certificate Verification</h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">Certificate Verification</h1>
+          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
             Verify the authenticity and integrity of digital certificates through advanced cryptographic validation
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* File Upload Section */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <div className="p-2 bg-green-500/30 rounded-lg">
+                <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Verify by File Upload</h2>
+              <h2 className="text-xl font-bold text-white">Verify by File Upload</h2>
             </div>
-            <p className="text-gray-600 mb-6">Upload a certificate file for comprehensive verification including QR code validation</p>
+            <p className="text-gray-300 mb-6">Upload a certificate file for comprehensive verification including QR code validation</p>
             <FileUpload onFileSelect={onFileSelect} isProcessing={isProcessing} acceptedTypes=".pdf,.png,.jpg,.jpeg,.bmp,.tiff" />
           </div>
 
           {/* Manual Fields Section */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <div className="p-2 bg-blue-500/30 rounded-lg">
+                <svg className="w-5 h-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Verify by Certificate Data</h2>
+              <h2 className="text-xl font-bold text-white">Verify by Certificate Data</h2>
             </div>
-            <p className="text-gray-600 mb-6">Enter specific certificate information for targeted verification</p>
+            <p className="text-gray-300 mb-6">Enter specific certificate information for targeted verification</p>
             <form onSubmit={submitFields} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Certificate ID</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Certificate ID</label>
                 <input 
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
+                  className="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
                   placeholder="Enter certificate ID" 
                   value={fields.certificate_id} 
                   onChange={e=>setFields({...fields, certificate_id: e.target.value})} 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                 <input 
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
+                  className="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
                   placeholder="Enter full name" 
                   value={fields.name} 
                   onChange={e=>setFields({...fields, name: e.target.value})} 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Roll Number</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Roll Number</label>
                 <input 
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
+                  className="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
                   placeholder="Enter roll number" 
                   value={fields.roll_number} 
                   onChange={e=>setFields({...fields, roll_number: e.target.value})} 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Course</label>
                 <input 
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
+                  className="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200" 
                   placeholder="Enter course name" 
                   value={fields.course} 
                   onChange={e=>setFields({...fields, course: e.target.value})} 
@@ -152,21 +152,21 @@ export default function VerifyPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
             <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 text-red-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
-              <p className="text-red-800 font-medium">{error}</p>
+              <p className="text-red-200 font-medium">{error}</p>
             </div>
           </div>
         )}
 
         {verdict && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <h3 className="text-xl font-semibold text-white flex items-center gap-2">
+                <svg className="w-6 h-6 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
                 Verification Result
@@ -193,14 +193,14 @@ export default function VerifyPage() {
 
             {/* Verification Details */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <p className="text-gray-600 text-sm mb-1">Matched By</p>
-                <p className="text-gray-900 font-medium capitalize">{verdict.matched_by || 'N/A'}</p>
+              <div className="bg-white/5 rounded-lg border border-white/10 p-4">
+                <p className="text-gray-300 text-sm mb-1">Matched By</p>
+                <p className="text-white font-medium capitalize">{verdict.matched_by || 'N/A'}</p>
               </div>
               
               {verdict.integrity && (
-                <div className="bg-white rounded-lg border border-gray-200 p-4">
-                  <p className="text-gray-600 text-sm mb-1">File Integrity</p>
+                <div className="bg-white/5 rounded-lg border border-white/10 p-4">
+                  <p className="text-gray-300 text-sm mb-1">File Integrity</p>
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
                       verdict.integrity === 'match' 
@@ -226,8 +226,8 @@ export default function VerifyPage() {
               )}
               
               {typeof verdict.qr_verified !== 'undefined' && (
-                <div className="bg-white rounded-lg border border-gray-200 p-4">
-                  <p className="text-gray-600 text-sm mb-1">QR Code Verification</p>
+                <div className="bg-white/5 rounded-lg border border-white/10 p-4">
+                  <p className="text-gray-300 text-sm mb-1">QR Code Verification</p>
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
                       verdict.qr_verified 
@@ -252,14 +252,14 @@ export default function VerifyPage() {
 
             {/* Certificate Details */}
             {verdict.record && (
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h4 className="text-gray-900 font-medium mb-3 flex items-center gap-2">
-                  <svg className="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+              <div className="bg-white/5 rounded-lg border border-white/10 p-4">
+                <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-cyan-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                   </svg>
                   Certificate Details
                 </h4>
-                <pre className="text-gray-800 text-sm overflow-x-auto whitespace-pre-wrap">{JSON.stringify(verdict.record, null, 2)}</pre>
+                <pre className="text-gray-200 text-sm overflow-x-auto whitespace-pre-wrap">{JSON.stringify(verdict.record, null, 2)}</pre>
               </div>
             )}
           </div>

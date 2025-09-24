@@ -255,3 +255,38 @@ class CertificateStore:
             return True
         except Exception:
             return False
+
+    def clear_all_data(self) -> Dict[str, Any]:
+        """Clear all data from the database (admin operation)."""
+        result = {
+            'certificates_deleted': 0,
+            'verifications_deleted': 0,
+            'success': True,
+            'error': None
+        }
+        
+        try:
+            # Count documents before deletion
+            cert_count = self.certificates.count_documents({})
+            verify_count = self.verifications.count_documents({})
+            
+            # Delete all documents from both collections
+            cert_result = self.certificates.delete_many({})
+            verify_result = self.verifications.delete_many({})
+            
+            result['certificates_deleted'] = cert_result.deleted_count
+            result['verifications_deleted'] = verify_result.deleted_count
+            
+            # Verify deletion
+            remaining_certs = self.certificates.count_documents({})
+            remaining_verifs = self.verifications.count_documents({})
+            
+            if remaining_certs > 0 or remaining_verifs > 0:
+                result['success'] = False
+                result['error'] = f"Incomplete deletion: {remaining_certs} certificates and {remaining_verifs} verifications remain"
+            
+        except Exception as e:
+            result['success'] = False
+            result['error'] = str(e)
+        
+        return result

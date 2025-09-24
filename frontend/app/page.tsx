@@ -1,397 +1,144 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { adminApi, ImportResponse } from '@/lib/api';
+import React from 'react';
 
 export default function Home() {
-  const [jsonText, setJsonText] = useState('[\n  {"certificate_id":"JH-UNI-2022-0001","name":"Amit Kumar","roll_number":"19CS1234","course":"B.Tech CSE","issue_date":"2022-07-15","issuer":"XYZ University"}\n]');
-  const [csvText, setCsvText] = useState('certificate_id,name,roll_number,course,issue_date,issuer\nJH-UNI-2022-0001,Amit Kumar,19CS1234,B.Tech CSE,2022-07-15,XYZ University');
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<ImportResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState('demo-admin-key');
-  const [regFile, setRegFile] = useState<File | null>(null);
-  const [regMeta, setRegMeta] = useState({ certificate_id: '', name: '', roll_number: '', course: '', issue_date: '', issuer: '', issuer_id: '', auto_ocr: '1' });
-  const [stats, setStats] = useState<any | null>(null);
-  const [certificates, setCertificates] = useState<any[]>([]);
-  const [showImportSection, setShowImportSection] = useState(false);
-
-  useEffect(() => {
-    loadDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      const s = await adminApi.stats(apiKey);
-      setStats(s?.stats || s);
-      
-      // Load certificates list
-      const resp = await fetch(`http://localhost:5000/api/admin/records?limit=10`, {
-        headers: { 'X-API-Key': apiKey }
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        setCertificates(data.items || []);
-      }
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-    }
-  };
-
-  const parseCsv = (text: string): any[] => {
-    const lines = text.split(/\r?\n/).filter(Boolean);
-    if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.trim());
-    return lines.slice(1).map(line => {
-      const vals = line.split(',');
-      const obj: any = {};
-      headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
-      return obj;
-    });
-  };
-
-  const importJson = async () => {
-    try {
-      setIsLoading(true); setError(null); setResult(null);
-      const records = JSON.parse(jsonText);
-      if (!Array.isArray(records)) throw new Error('JSON must be an array');
-  const resp = await adminApi.importRecords(records, apiKey);
-      setResult(resp);
-    } catch (e: any) {
-      setError(e?.message || 'Import failed');
-    } finally { setIsLoading(false); }
-  };
-
-  const importCsv = async () => {
-    try {
-      setIsLoading(true); setError(null); setResult(null);
-      const records = parseCsv(csvText);
-      const resp = await adminApi.importRecords(records, apiKey);
-      setResult(resp);
-    } catch (e: any) {
-      setError(e?.message || 'Import failed');
-    } finally { setIsLoading(false); }
-  };
-
   return (
-    <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center mb-8">
+            <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Certificate Management Dashboard
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            CertVerify
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Streamline your certificate verification process with our professional management system
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Professional Certificate Verification & Management System
+          </p>
+          <p className="text-lg text-gray-500 mb-12">
+            Secure, scalable, and efficient certificate verification with advanced OCR capabilities and comprehensive audit trails.
           </p>
         </div>
 
-        {/* API Key Configuration */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <label className="text-sm font-medium text-gray-700 block mb-3">API Authentication Key</label>
-          <input 
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-            value={apiKey} 
-            onChange={e=>setApiKey(e.target.value)} 
-            placeholder="Enter your API key" 
-          />
+        {/* Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+              <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Certificate Verification</h3>
+            <p className="text-gray-600">
+              Instantly verify certificate authenticity with our robust verification system. Quick lookup by certificate ID with comprehensive audit trails.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">OCR Extraction</h3>
+            <p className="text-gray-600">
+              Advanced OCR technology extracts certificate details from images and PDFs automatically, supporting multiple formats and languages.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+              <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 2a4 4 0 014 4v1a2 2 0 012 2v6a3 3 0 01-3 3H7a3 3 0 01-3-3V9a2 2 0 012-2V6a4 4 0 014-4zm0 2a2 2 0 00-2 2v1h4V6a2 2 0 00-2-2z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Admin Management</h3>
+            <p className="text-gray-600">
+              Comprehensive admin dashboard for certificate management, bulk imports, statistics, and system monitoring with role-based access.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
+              <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Audit & Compliance</h3>
+            <p className="text-gray-600">
+              Complete audit trails, verification logs, and compliance reporting. Track all certificate interactions with detailed timestamps.
+            </p>
+          </div>
         </div>
 
-        {/* Dashboard Stats */}
-        {stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm font-medium">Total Certificates</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.certificates}</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM9 9a1 1 0 112 0v4a1 1 0 11-2 0V9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm font-medium">Active Issuers</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.issuers}</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 text-sm font-medium">Verification Logs</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.logs}</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Certificates List */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Recent Certificates</h2>
-            <button 
-              onClick={() => setShowImportSection(!showImportSection)}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center gap-2 font-medium"
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a 
+              href="/verify" 
+              className="flex flex-col items-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all duration-200 group"
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-              </svg>
-              {showImportSection ? 'Hide Import' : 'Import Certificates'}
-            </button>
-          </div>
-
-          {certificates.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-gray-700 font-semibold">Certificate ID</th>
-                    <th className="text-left py-3 px-4 text-gray-700 font-semibold">Name</th>
-                    <th className="text-left py-3 px-4 text-gray-700 font-semibold">Course</th>
-                    <th className="text-left py-3 px-4 text-gray-700 font-semibold">Issuer</th>
-                    <th className="text-left py-3 px-4 text-gray-700 font-semibold">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {certificates.map((cert, index) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-3 px-4 text-blue-600 font-mono text-sm font-medium">{cert.certificate_id || 'N/A'}</td>
-                      <td className="py-3 px-4 text-gray-900 font-medium">{cert.name || 'N/A'}</td>
-                      <td className="py-3 px-4 text-gray-600">{cert.course || 'N/A'}</td>
-                      <td className="py-3 px-4 text-gray-600">{cert.issuer || 'N/A'}</td>
-                      <td className="py-3 px-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          Verified
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <p className="text-gray-600 text-lg font-medium">No certificates found</p>
-              <p className="text-gray-500 text-sm">Start by importing or registering your first certificate</p>
-            </div>
-          )}
-        </div>
-
-        {/* Import Section - Collapsible */}
-        {showImportSection && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                    JSON Import
-                  </h3>
-                  <button 
-                    onClick={importJson} 
-                    disabled={isLoading} 
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-medium"
-                  >
-                    Import JSON
-                  </button>
-                </div>
-                <textarea 
-                  value={jsonText} 
-                  onChange={e=>setJsonText(e.target.value)} 
-                  className="w-full h-64 bg-gray-50 border border-gray-300 rounded-lg p-4 text-gray-900 font-mono text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors" 
-                  placeholder="Paste your JSON data here..."
-                />
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
               </div>
+              <span className="text-sm font-medium text-gray-900">Verify Certificate</span>
+            </a>
 
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                    CSV Import
-                  </h3>
-                  <button 
-                    onClick={importCsv} 
-                    disabled={isLoading} 
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-medium"
-                  >
-                    Import CSV
-                  </button>
-                </div>
-                <textarea 
-                  value={csvText} 
-                  onChange={e=>setCsvText(e.target.value)} 
-                  className="w-full h-64 bg-gray-50 border border-gray-300 rounded-lg p-4 text-gray-900 font-mono text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-                  placeholder="certificate_id,name,roll_number,course,issue_date,issuer"
-                />
-                <p className="text-xs text-gray-600 mt-2">Required headers: certificate_id, name, roll_number, course, issue_date, issuer</p>
+            <a 
+              href="/ocr" 
+              className="flex flex-col items-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-200 group"
+            >
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                </svg>
               </div>
-            </div>
+              <span className="text-sm font-medium text-gray-900">OCR Extract</span>
+            </a>
 
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-              <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+            <a 
+              href="/admin" 
+              className="flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all duration-200 group"
+            >
+              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-gray-900">Admin Dashboard</span>
+            </a>
+
+            <a 
+              href="/admin/import" 
+              className="flex flex-col items-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl hover:from-orange-100 hover:to-orange-200 transition-all duration-200 group"
+            >
+              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
-                Register Certificate with File Hash
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="col-span-full">
-                  <label className="block text-sm text-gray-300 mb-2">Certificate File</label>
-                  <input 
-                    type="file" 
-                    onChange={e=>setRegFile(e.target.files?.[0] || null)} 
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-cyan-500 file:to-blue-600 file:text-white file:cursor-pointer hover:file:from-cyan-600 hover:file:to-blue-700"
-                  />
-                </div>
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Certificate ID" 
-                  value={regMeta.certificate_id} 
-                  onChange={e=>setRegMeta({...regMeta, certificate_id: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Student Name" 
-                  value={regMeta.name} 
-                  onChange={e=>setRegMeta({...regMeta, name: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Roll Number" 
-                  value={regMeta.roll_number} 
-                  onChange={e=>setRegMeta({...regMeta, roll_number: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Course" 
-                  value={regMeta.course} 
-                  onChange={e=>setRegMeta({...regMeta, course: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Issue Date" 
-                  value={regMeta.issue_date} 
-                  onChange={e=>setRegMeta({...regMeta, issue_date: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Issuer" 
-                  value={regMeta.issuer} 
-                  onChange={e=>setRegMeta({...regMeta, issuer: e.target.value})} 
-                />
-                <input 
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                  placeholder="Issuer ID (optional)" 
-                  value={regMeta.issuer_id} 
-                  onChange={e=>setRegMeta({...regMeta, issuer_id: e.target.value})} 
-                />
               </div>
-              <div className="flex items-center justify-between mt-6">
-                <label className="flex items-center gap-2 text-sm text-gray-300">
-                  <input 
-                    type="checkbox" 
-                    checked={regMeta.auto_ocr === '1'} 
-                    onChange={e=>setRegMeta({...regMeta, auto_ocr: e.target.checked ? '1' : '0'})} 
-                    className="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2"
-                  />
-                  Auto-fill via OCR if fields are missing
-                </label>
-                <button
-                  onClick={async ()=>{
-                    try{
-                      if(!regFile){ setError('Please select a file'); return; }
-                      setIsLoading(true); setError(null); setResult(null);
-                      const resp = await adminApi.registerFile(regFile, regMeta as any, apiKey);
-                      setResult(resp);
-                      loadDashboardData(); // Refresh data
-                    }catch(e:any){ setError(e?.message || 'Registration failed'); }
-                    finally{ setIsLoading(false); }
-                  }}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                      </svg>
-                      Register Certificate
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
+              <span className="text-sm font-medium text-gray-900">Import Data</span>
+            </a>
           </div>
-        )}
+        </div>
 
-        {/* Results and Errors */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <div>
-                <h3 className="text-red-800 font-medium">Operation Failed</h3>
-                <p className="text-red-700 text-sm mt-1">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {result && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <h3 className="text-green-800 font-semibold">Operation Successful</h3>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <pre className="text-gray-800 text-sm overflow-x-auto font-mono">{JSON.stringify(result, null, 2)}</pre>
-            </div>
-          </div>
-        )}
+        {/* Footer */}
+        <div className="text-center mt-16">
+          <p className="text-gray-500 text-sm">
+            Built with security and scalability in mind. Powered by advanced OCR and cryptographic verification.
+          </p>
+        </div>
       </div>
     </main>
   );

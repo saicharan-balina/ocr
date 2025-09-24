@@ -51,21 +51,21 @@ export default function OCRPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 border border-white/20">
+              <svg className="w-8 h-8 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-white mb-4">
             OCR Text Extraction
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-gray-300 mb-6">
             Extract text from certificates and documents using advanced OCR technology
           </p>
           
@@ -76,7 +76,7 @@ export default function OCRPage() {
               backendStatus === 'offline' ? 'bg-red-500' : 
               'bg-yellow-500'
             }`}></div>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-300">
               Backend: {
                 backendStatus === 'online' ? 'Connected' :
                 backendStatus === 'offline' ? 'Disconnected' :
@@ -86,7 +86,7 @@ export default function OCRPage() {
             {backendStatus === 'offline' && (
               <button
                 onClick={retryBackendConnection}
-                className="text-sm text-blue-600 hover:text-blue-700 underline ml-2"
+                className="text-sm text-blue-400 hover:text-blue-300 underline ml-2"
               >
                 Retry
               </button>
