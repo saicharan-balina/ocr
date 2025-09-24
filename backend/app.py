@@ -3,10 +3,20 @@ from flask_cors import CORS
 import os
 import logging
 from utils.ocr_processor import OCRProcessor
-from utils.extractors import extract_fields
+from utils.extractors import extract_fields, extract_qr_content
 from utils.auth import require_api_key, AuthError
 from db.store import CertificateStore
 from utils.file_handler import save_uploaded_file, cleanup_file, UPLOAD_FOLDER
+from typing import Optional
+
+try:
+    from PIL import Image  # type: ignore
+except Exception:  # pragma: no cover
+    Image = None  # type: ignore
+try:
+    import fitz  # type: ignore
+except Exception:  # pragma: no cover
+    fitz = None  # type: ignore
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,9 +28,19 @@ app = Flask(__name__)
 # Enable CORS for all routes with custom headers for admin auth
 CORS(
     app,
-    origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_headers=["Content-Type", "X-API-Key"],
-    methods=["GET", "POST", "OPTIONS"],
+    resources={
+        r"/*": {
+            "origins": [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://192.168.29.115:3000",
+                "*",
+            ],
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "X-API-Key"],
+            "supports_credentials": False,
+        }
+    },
 )
 
 # Configure upload settings
@@ -40,7 +60,7 @@ def health_check():
         'version': '1.0.0'
     })
 
-@app.route('/api/ocr', methods=['POST'])
+@app.route('/api/ocr', methods=['POST', 'OPTIONS'])
 def process_ocr():
     """Main OCR endpoint that accepts file uploads and returns extracted text"""
     try:
@@ -143,13 +163,16 @@ def internal_error(error):
 # Prototype verification APIs
 # -----------------------
 
-@app.route('/api/import', methods=['POST'])
+@app.route('/api/import', methods=['POST', 'OPTIONS'])
 def import_records():
     """Import certificate records in bulk for institutions.
 
     Body: { records: [ { certificate_id, name, roll_number, course, issue_date, issuer, hash, ... } ] }
     """
     try:
+        # Allow CORS preflight without auth
+        if request.method == 'OPTIONS':
+            return ('', 204)
         # admin auth
         try:
             admin = require_api_key(request.headers)
@@ -173,13 +196,48 @@ def import_records():
         return jsonify({ 'success': False, 'error': str(e) }), 500
 
 
- 
+@app.route('/api/admin/stats', methods=['GET', 'OPTIONS'])
+def admin_stats():
+    try:
+        if request.method == 'OPTIONS':
+            return ('', 204)
+        try:
+            _ = require_api_key(request.headers)
+        except AuthError as e:
+            return jsonify({ 'success': False, 'error': str(e) }), 401
+        return jsonify({ 'success': True, 'stats': store.stats() })
+    except Exception as e:
+        return jsonify({ 'success': False, 'error': str(e) }), 500
+
+
+@app.route('/api/admin/records', methods=['GET', 'OPTIONS'])
+def admin_list_records():
+    try:
+        if request.method == 'OPTIONS':
+            return ('', 204)
+        try:
+            _ = require_api_key(request.headers)
+        except AuthError as e:
+            return jsonify({ 'success': False, 'error': str(e) }), 401
+        admin = require_api_key(request.headers)
+        limit = int(request.args.get('limit', '50'))
+        offset = int(request.args.get('offset', '0'))
+        items, total = store.list_records(limit=limit, offset=offset)
+        issuer_id = admin.get('issuer_id')
+        if issuer_id and issuer_id != '*':
+            items = [r for r in items if r.get('issuer_id') == issuer_id]
+        return jsonify({ 'success': True, 'total': total, 'items': items, 'limit': limit, 'offset': offset })
+    except Exception as e:
+        return jsonify({ 'success': False, 'error': str(e) }), 500
 
 
  
 
 
-@app.route('/api/verify', methods=['POST'])
+ 
+
+
+@app.route('/api/verify', methods=['POST', 'OPTIONS'])
 def verify_certificate():
     """Verify a certificate via OCR text or provided fields.
 
@@ -188,6 +246,10 @@ def verify_certificate():
       - JSON body with fields { certificate_id?, name?, roll_number?, course? }
     """
     try:
+        qr_payload: Optional[str] = None
+        qr_verified = False
+        qr_id: Optional[str] = None
+        qr_hash: Optional[str] = None
         if request.files.get('file'):
             # Reuse OCR pipeline
             file = request.files['file']
@@ -209,6 +271,43 @@ def verify_certificate():
                     file_hash = store.sha256(file_bytes)
                 except Exception:
                     file_hash = None
+
+                # Try QR decode from first page/image
+                try:
+                    ext = (file_extension or '').lower()
+                    if Image is not None:
+                        if ext in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
+                            img = Image.open(file_path)
+                            qr_payload = extract_qr_content(img)
+                        elif ext == 'pdf' and fitz is not None:
+                            with fitz.open(file_path) as doc:
+                                if doc.page_count > 0:
+                                    mat = fitz.Matrix(getattr(ocr_processor, 'pdf_zoom', 3.0), getattr(ocr_processor, 'pdf_zoom', 3.0))
+                                    pix = doc[0].get_pixmap(matrix=mat, alpha=False)
+                                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                                    qr_payload = extract_qr_content(img)
+                    # attempt to parse fields from QR string
+                    if qr_payload:
+                        try:
+                            import json, urllib.parse, re as _re
+                            try:
+                                obj = json.loads(qr_payload)
+                                qr_id = obj.get('certificate_id') or obj.get('cert_id') or obj.get('id')
+                                qr_hash = obj.get('file_hash') or obj.get('hash')
+                            except Exception:
+                                if '://' in qr_payload and '?' in qr_payload:
+                                    qs = urllib.parse.urlparse(qr_payload).query
+                                    qsd = dict(urllib.parse.parse_qsl(qs))
+                                    qr_id = qsd.get('certificate_id') or qsd.get('cert_id') or qsd.get('id')
+                                    qr_hash = qsd.get('file_hash') or qsd.get('hash')
+                                if not qr_id:
+                                    m = _re.search(r'[A-Za-z0-9\-/]{6,}', qr_payload)
+                                    if m:
+                                        qr_id = m.group(0)
+                        except Exception:
+                            pass
+                except Exception:
+                    qr_payload = None
             finally:
                 cleanup_file(file_path)
         else:
@@ -218,9 +317,14 @@ def verify_certificate():
             name = payload.get('name')
             course = payload.get('course')
             file_hash = payload.get('file_hash')
+            qr_payload = payload.get('qr_payload')
 
         record = None
         matched_by = None
+        # If QR provided and contains ID, prefer it
+        if qr_payload and not cert_id and qr_id:
+            cert_id = qr_id
+            matched_by = 'qr'
         if cert_id:
             record = store.get_by_certificate_id(cert_id)
             matched_by = 'certificate_id'
@@ -233,20 +337,33 @@ def verify_certificate():
         integrity = 'unknown'
         if record and file_hash and record.get('file_hash'):
             integrity = 'match' if record.get('file_hash') == file_hash else 'mismatch'
+        # determine qr_verified
+        if record and qr_payload:
+            try:
+                rec_id = (record.get('certificate_id') or '').strip().lower()
+                if qr_id and (qr_id or '').strip().lower() == rec_id:
+                    qr_verified = True
+                elif qr_hash and record.get('file_hash') and qr_hash == record.get('file_hash'):
+                    qr_verified = True
+            except Exception:
+                qr_verified = False
+
         response = {
             'success': True,
             'verdict': verdict,
             'matched_by': matched_by,
             'record': record,
             'integrity': integrity,
-            'observed_file_hash': file_hash
+            'observed_file_hash': file_hash,
+            'qr_payload': qr_payload,
+            'qr_verified': qr_verified if (qr_payload and record) else False,
         }
         return jsonify(response)
     except Exception as e:
         return jsonify({ 'success': False, 'error': str(e) }), 500
 
 
-@app.route('/api/register', methods=['POST'])
+@app.route('/api/register', methods=['POST', 'OPTIONS'])
 def register_certificate_file():
     """Admin-only: register a certificate by uploading its file and metadata.
 
@@ -257,6 +374,8 @@ def register_certificate_file():
     Computes file_hash (sha256) and stores with metadata.
     """
     try:
+        if request.method == 'OPTIONS':
+            return ('', 204)
         try:
             admin = require_api_key(request.headers)
         except AuthError as e:
@@ -315,6 +434,12 @@ def register_certificate_file():
             cleanup_file(file_path)
     except Exception as e:
         return jsonify({ 'success': False, 'error': str(e) }), 500
+
+
+@app.route('/api/stats', methods=['GET', 'OPTIONS'])
+def stats_alias():
+    # Alias to admin_stats for convenience
+    return admin_stats()
 
 
 if __name__ == '__main__':

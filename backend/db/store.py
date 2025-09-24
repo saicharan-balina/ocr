@@ -82,3 +82,27 @@ class CertificateStore:
 
     def log_verification(self, entry: Dict[str, Any]) -> int:
         return self.tbl_logs.insert(entry)
+
+    # --- Helpers for admin views ---
+    def list_records(self, limit: int = 50, offset: int = 0) -> Tuple[List[Dict[str, Any]], int]:
+        """Return a slice of certificate records and total count (prototype pagination)."""
+        all_items = list(self.tbl_certs)
+        total = len(all_items)
+        start = max(0, offset)
+        end = max(start, start + max(0, limit))
+        return all_items[start:end], total
+
+    def stats(self) -> Dict[str, Any]:
+        """Basic counts for dashboard."""
+        total_certs = len(list(self.tbl_certs))
+        total_logs = len(list(self.tbl_logs))
+        # number of unique issuers if present
+        issuers = set()
+        for r in self.tbl_certs:
+            if r.get('issuer'):
+                issuers.add(r['issuer'])
+        return {
+            'certificates': total_certs,
+            'logs': total_logs,
+            'issuers': len(issuers),
+        }
