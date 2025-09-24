@@ -1,1 +1,128 @@
-{"certificates": {"1": {"certificate_id": "CERT1758583205CEC5E45FCFAFDA95", "name": "", "roll_number": "", "course": "Software Engineering", "issue_date": "", "issuer": "", "issuer_id": null, "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a", "file_name": "charan_CERT1758583205CEC5E45FCFAFDA95.pdf", "file_ext": "pdf", "certificate_id_lower": "cert1758583205cec5e45fcfafda95"}, "2": {"certificate_id": "CERT1758565308DCBE7A3F42814EC8", "name": "", "roll_number": "", "course": "Web Development", "issue_date": "", "issuer": "", "issuer_id": null, "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f", "file_name": "CERT1758565308DCBE7A3F42814EC8.pdf", "file_ext": "pdf", "certificate_id_lower": "cert1758565308dcbe7a3f42814ec8"}, "3": {"certificate_id": "", "name": "", "roll_number": "", "course": "authorized by DeepLearning.AI and Stanford University and", "issue_date": "", "issuer": "", "issuer_id": null, "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b", "file_name": "Machine Learning Coursera.pdf", "file_ext": "pdf"}, "4": {"certificate_id": "", "name": "", "roll_number": "", "course": "authorized by DeepLearning.AI and Stanford University and", "issue_date": "", "issuer": "", "issuer_id": null, "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b", "file_name": "Machine Learning Coursera.pdf", "file_ext": "pdf"}}, "verifications": {"1": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758583205CEC5E45FCFAFDA95", "file_hash": "d3163ee0391e1f9e92653856276c35fce72a47c6d46ad786d84428b36fbb21eb", "inserted": true}, "2": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758583205CEC5E45FCFAFDA95", "file_hash": "d3163ee0391e1f9e92653856276c35fce72a47c6d46ad786d84428b36fbb21eb", "inserted": false}, "3": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758565308DCBE7A3F42814EC8", "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f", "inserted": true}, "4": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758565308DCBE7A3F42814EC8", "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f", "inserted": false}, "5": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "", "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b", "inserted": true}, "6": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "", "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b", "inserted": true}, "7": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758565308DCBE7A3F42814EC8", "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f", "inserted": false}, "8": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758583205CEC5E45FCFAFDA95", "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a", "inserted": false}, "9": {"type": "registration", "admin_role": "superadmin", "issuer_id": "*", "certificate_id": "CERT1758583205CEC5E45FCFAFDA95", "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a", "inserted": false}}}
+{
+    "certificates": {
+        "1": {
+            "certificate_id": "CERT1758583205CEC5E45FCFAFDA95",
+            "name": "",
+            "roll_number": "",
+            "course": "Software Engineering",
+            "issue_date": "",
+            "issuer": "",
+            "issuer_id": null,
+            "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a",
+            "file_name": "charan_CERT1758583205CEC5E45FCFAFDA95.pdf",
+            "file_ext": "pdf",
+            "certificate_id_lower": "cert1758583205cec5e45fcfafda95"
+        },
+        "2": {
+            "certificate_id": "CERT1758565308DCBE7A3F42814EC8",
+            "name": "",
+            "roll_number": "",
+            "course": "Web Development",
+            "issue_date": "",
+            "issuer": "",
+            "issuer_id": null,
+            "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f",
+            "file_name": "CERT1758565308DCBE7A3F42814EC8.pdf",
+            "file_ext": "pdf",
+            "certificate_id_lower": "cert1758565308dcbe7a3f42814ec8"
+        },
+        "3": {
+            "certificate_id": "",
+            "name": "",
+            "roll_number": "",
+            "course": "authorized by DeepLearning.AI and Stanford University and",
+            "issue_date": "",
+            "issuer": "",
+            "issuer_id": null,
+            "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b",
+            "file_name": "Machine Learning Coursera.pdf",
+            "file_ext": "pdf"
+        },
+        "4": {
+            "certificate_id": "",
+            "name": "",
+            "roll_number": "",
+            "course": "authorized by DeepLearning.AI and Stanford University and",
+            "issue_date": "",
+            "issuer": "",
+            "issuer_id": null,
+            "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b",
+            "file_name": "Machine Learning Coursera.pdf",
+            "file_ext": "pdf"
+        }
+    },
+    "verifications": {
+        "1": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758583205CEC5E45FCFAFDA95",
+            "file_hash": "d3163ee0391e1f9e92653856276c35fce72a47c6d46ad786d84428b36fbb21eb",
+            "inserted": true
+        },
+        "2": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758583205CEC5E45FCFAFDA95",
+            "file_hash": "d3163ee0391e1f9e92653856276c35fce72a47c6d46ad786d84428b36fbb21eb",
+            "inserted": false
+        },
+        "3": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758565308DCBE7A3F42814EC8",
+            "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f",
+            "inserted": true
+        },
+        "4": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758565308DCBE7A3F42814EC8",
+            "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f",
+            "inserted": false
+        },
+        "5": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "",
+            "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b",
+            "inserted": true
+        },
+        "6": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "",
+            "file_hash": "837abd616ae434e040f4866e1d59538d1a5c01dafaae64d68500840a4e566d9b",
+            "inserted": true
+        },
+        "7": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758565308DCBE7A3F42814EC8",
+            "file_hash": "61857430ce3e2350822363387ecddfa0261cfae4b0b5bc4e437136c137b0395f",
+            "inserted": false
+        },
+        "8": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758583205CEC5E45FCFAFDA95",
+            "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a",
+            "inserted": false
+        },
+        "9": {
+            "type": "registration",
+            "admin_role": "superadmin",
+            "issuer_id": "*",
+            "certificate_id": "CERT1758583205CEC5E45FCFAFDA95",
+            "file_hash": "92ef10bc099592a82fd2d48124a8a10f2bd8109e5f8c11191f9096a5e923fa9a",
+            "inserted": false
+        }
+    }
+}

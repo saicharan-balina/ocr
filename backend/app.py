@@ -2,12 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import logging
+import json
 from utils.ocr_processor import OCRProcessor
 from utils.extractors import extract_fields, extract_qr_content
 from utils.auth import require_api_key, AuthError
 from db.store import CertificateStore
 from utils.file_handler import save_uploaded_file, cleanup_file, UPLOAD_FOLDER
 from typing import Optional
+from bson import ObjectId
 
 try:
     from PIL import Image  # type: ignore
@@ -22,8 +24,18 @@ except Exception:  # pragma: no cover
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+class JSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder to handle MongoDB ObjectId and other special types."""
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super().default(obj)
+
+
 # Initialize Flask app
 app = Flask(__name__)
+app.json_encoder = JSONEncoder
 
 # Enable CORS for all routes with custom headers for admin auth
 CORS(
@@ -49,15 +61,35 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Initialize OCR processor and store
 ocr_processor = OCRProcessor()
-store = CertificateStore()
+
+# Initialize MongoDB store
+try:
+    store = CertificateStore()
+    if store.health_check():
+        logger.info("✅ MongoDB connection established successfully")
+        logger.info("🚀 Using professional MongoDB storage")
+    else:
+        raise Exception("MongoDB health check failed")
+        
+except Exception as e:
+    logger.error(f"Failed to connect to MongoDB: {e}")
+    logger.error("Please ensure MongoDB is running on localhost:27017")
+    raise
 
 @app.route('/', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
+    """Health check endpoint with database status"""
+    db_status = "connected" if store.health_check() else "disconnected"
+    
     return jsonify({
-        'status': 'healthy',
-        'message': 'Certificate OCR API is running',
-        'version': '1.0.0'
+        'status': 'healthy' if db_status == "connected" else 'degraded',
+        'message': 'Certificate OCR API is running - Professional MongoDB Edition',
+        'version': '2.0.0',
+        'database': {
+            'type': 'MongoDB',
+            'status': db_status,
+            'connection_string': 'mongodb://localhost:27017/'
+        }
     })
 
 @app.route('/api/ocr', methods=['POST', 'OPTIONS'])
@@ -442,12 +474,27 @@ def stats_alias():
     return admin_stats()
 
 
+# NOTE: Do NOT close the global MongoDB client per-request. It is shared across
+# requests and will be closed on application shutdown in the __main__ block.
+
+
 if __name__ == '__main__':
     # Ensure upload dir exists
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    # Start server after all routes are registered
-    app.run(
-        debug=True,
-        host='0.0.0.0',
-        port=5000
-    )
+    
+    try:
+        # Start server after all routes are registered
+        app.run(
+            debug=True,
+            host='0.0.0.0',
+            port=5000
+        )
+    except KeyboardInterrupt:
+        logger.info("Shutting down server...")
+    except Exception as e:
+        logger.error(f"Server error: {e}")
+    finally:
+        # Ensure database connection is closed
+        if 'store' in globals():
+            store.close_connection()
+        logger.info("Application shutdown complete")
