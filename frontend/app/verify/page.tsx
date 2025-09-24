@@ -193,21 +193,21 @@ export default function VerifyPage() {
 
             {/* Verification Details */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-black/30 rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Matched By</p>
-                <p className="text-white font-medium capitalize">{verdict.matched_by || 'N/A'}</p>
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <p className="text-gray-600 text-sm mb-1">Matched By</p>
+                <p className="text-gray-900 font-medium capitalize">{verdict.matched_by || 'N/A'}</p>
               </div>
               
               {verdict.integrity && (
-                <div className="bg-black/30 rounded-lg p-4">
-                  <p className="text-gray-400 text-sm mb-1">File Integrity</p>
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
+                  <p className="text-gray-600 text-sm mb-1">File Integrity</p>
                   <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
                       verdict.integrity === 'match' 
-                        ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+                        ? 'bg-green-100 text-green-800 border-green-200' 
                         : verdict.integrity === 'mismatch'
-                        ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                        : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                        ? 'bg-red-100 text-red-800 border-red-200'
+                        : 'bg-gray-100 text-gray-800 border-gray-200'
                     }`}>
                       {verdict.integrity === 'match' && (
                         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -226,13 +226,13 @@ export default function VerifyPage() {
               )}
               
               {typeof verdict.qr_verified !== 'undefined' && (
-                <div className="bg-black/30 rounded-lg p-4">
-                  <p className="text-gray-400 text-sm mb-1">QR Code Verification</p>
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
+                  <p className="text-gray-600 text-sm mb-1">QR Code Verification</p>
                   <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
                       verdict.qr_verified 
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' 
-                        : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                        ? 'bg-cyan-100 text-cyan-800 border-cyan-200' 
+                        : 'bg-gray-100 text-gray-800 border-gray-200'
                     }`}>
                       {verdict.qr_verified ? (
                         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -252,14 +252,14 @@ export default function VerifyPage() {
 
             {/* Certificate Details */}
             {verdict.record && (
-              <div className="bg-black/30 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <h4 className="text-gray-900 font-medium mb-3 flex items-center gap-2">
                   <svg className="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                   </svg>
                   Certificate Details
                 </h4>
-                <pre className="text-gray-300 text-sm overflow-x-auto whitespace-pre-wrap">{JSON.stringify(verdict.record, null, 2)}</pre>
+                <pre className="text-gray-800 text-sm overflow-x-auto whitespace-pre-wrap">{JSON.stringify(verdict.record, null, 2)}</pre>
               </div>
             )}
           </div>
